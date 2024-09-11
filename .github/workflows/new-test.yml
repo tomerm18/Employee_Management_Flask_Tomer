@@ -1,21 +1,30 @@
-name: Terraform Apply
-
+name: docker build + terraform deploy - testing
 on:
-  # push:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - 'terraform/**'
-  # pull_request:
-  #   branches:
-  #     - main
-  #   paths:
-  #     - 'terraform/**'
-  repository_dispatch:
-    types: [docker-update]
-
+  push:
 jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: simonjan2/employee_management_flask_test:latest
+
   terraform:
+    needs: docker
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -28,10 +37,10 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+     
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
-
+     
       - name: Create backend.tf
         run: |
           cat <<EOF > backend.tf
@@ -43,20 +52,16 @@ jobs:
             }
           }
           EOF
-
-      - name: Terraform Init
+     
+      - name: Terraform init
         run: terraform init
-
+     
       - name: Terraform Validate
         run: terraform validate
-
+     
       - name: Terraform Plan
         run: terraform plan -out=tfplan
-
+     
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'repository_dispatch')
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve tfplan
-
-      # - name: Terraform Destroy
-      #   if: github.ref == 'refs/heads/main' && github.event_name == 'repository_dispatch'
-      #   run: terraform destroy -auto-approve
