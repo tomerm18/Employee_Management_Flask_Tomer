@@ -8,7 +8,7 @@ availability_zone_2 = "us-east-1b"
 ami_id              = "ami-066784287e358dad1" # Amazon Linux 2 AMI (HVM), SSD Volume Type
 instance_type       = "t2.micro"
 app_version         = "v1.0.1"
-elastic_ip_id       = "eipalloc-005b471c15988fc2e" # id of the elastic ip
+elastic_ip_id       = "eipalloc-071f168deb3272057" # id of the elastic ip
 key_name            = "MyKeyPair"  # Replace with your actual key pair name
 
 # whenever you want to deploy a new version of your application:
