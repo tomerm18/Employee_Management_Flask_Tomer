@@ -9,7 +9,7 @@ ami_id              = "ami-066784287e358dad1" # Amazon Linux 2 AMI (HVM), SSD Vo
 instance_type       = "t2.micro"
 app_version         = "v1.0.1"
 elastic_ip_id       = "eipalloc-071f168deb3272057" # id of the elastic ip
-key_name            = "MyKeyPair"  # Replace with your actual key pair name
+key_name            = "Employee_Management_"  # Replace with your actual key pair name
 
 # whenever you want to deploy a new version of your application:
 #   1. Build and push your Docker image with a new tag (e.g., v1.0.1, v1.0.2, etc.) to Docker Hub.
